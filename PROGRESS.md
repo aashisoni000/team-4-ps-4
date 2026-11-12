@@ -1,25 +1,27 @@
-# DeskPilot build progress
-Tick a line only when its "Test in the app" checks pass. Commit after every tick.
+# DeskBot build progress
 
-- [ ] setup — 04 Setup (MANUAL)
-- [ ] rules — 05.1 Rules file
-- [ ] step1 — 06 Plan with AI (Ask)
-- [ ] step2 — 07 Read tools
-- [ ] step3 — 08 Write tools
-- [ ] step4 — 09 System prompt
-- [ ] step5 — 10 API routes
-- [ ] step6-kit — 11 Part A design kit (MANUAL paste)
-- [ ] step6 — 11 Parts B and C employee screen
-- [ ] step7 — 12 IT Desk screen
-- [ ] step8-build — 13 npm run build (MANUAL + Ask)
-- [ ] step8-deploy — 13 Commit, push, Vercel (MANUAL)
-- [ ] test — 14 Six moments (MANUAL)
+The implementation was adapted to the available `seed/ps4_it_helpdesk.sql`. The original DeskPilot guide referenced different tables, employee `E001`, database RPCs, and a design kit that are not part of this repository. Do not mark live checks complete until tested against the configured app.
 
-## Optional (after test)
-- [ ] stretch-1 — 16.1 Did that fix it?
-- [ ] stretch-2 — 16.2 Me too on outages
-- [ ] stretch-3 — 16.3 Ticket notes
-- [ ] stretch-4 — 16.4 SLA escalation
-- [ ] stretch-5 — 16.5 Warranty-aware advice
-- [ ] stretch-6 — 16.6 Passes wallet
-- [ ] stretch-7 — 16.7 Mobile check
+## Implementation and local checks
+
+- [x] Plan adapted to the PS4 seed and its actual schema.
+- [x] Agent read tools implemented for knowledge articles, employee info, tickets, support teams, and SLA rules.
+- [x] Ticket creation implemented with the seed's category, priority, team, and status values.
+- [x] DeskBot system prompt and agent round limit updated.
+- [x] Status, employee, IT Desk, and health API routes implemented.
+- [x] Employee dashboard and IT Desk queue implemented.
+- [x] `npm run typecheck`
+- [x] `npm run build`
+
+## Still requires configured-app verification
+
+- [ ] Confirm the PS4 seed is applied to the Supabase project and `/api/health` reports `databaseCheck: "ok"`.
+- [ ] Verify VPN knowledge-base search in the signed-in app.
+- [ ] Create a ticket from chat and confirm its team and SLA target.
+- [ ] Move a ticket through the IT Desk statuses and verify the employee view refreshes.
+- [ ] Run the full end-to-end checks with the configured Gemini and Supabase services.
+- [ ] Commit, push, and deploy after the live checks pass.
+
+## Seed limitations
+
+The available seed does not define service-status rows, assigned devices, individual technicians, ticket-event history, ticket cancellation, or create/cancel RPC functions. The app reports these limits rather than fabricating data or behavior.

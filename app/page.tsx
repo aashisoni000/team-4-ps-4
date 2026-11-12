@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import AgentChat from "@/components/AgentChat";
-import TaskList from "@/components/TaskList";
+import EmployeeOverview from "@/components/EmployeeOverview";
 
-/*
- * HOME PAGE
- * Left: the agent chat. Right: the data the agent works on (here: tasks).
- * YOUR JOB: replace TaskList with your own data view (orders, tickets, claims, ...)
- * and add more pages under app/ (for example app/orders/page.tsx).
- */
 export default function HomePage() {
-  // Changes every time the agent writes data, so the list on the right reloads.
   const [refreshKey, setRefreshKey] = useState(0);
 
   async function logout() {
@@ -20,22 +13,27 @@ export default function HomePage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl p-4 md:p-6">
-      <header className="mb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Hackathon Starter</h1>
-          <p className="text-sm text-slate-500">Replace this with your app name and problem statement.</p>
+    <main className="mx-auto max-w-[1440px] px-4 py-6 md:px-8 md:py-10">
+      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <span className="mt-1 h-3 w-3 rounded-full bg-accent shadow-[0_0_16px_var(--accent)]" />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">Zentrix · employee support</p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">DeskBot</h1>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">A calm first stop for workplace IT issues, approved fixes, and ticket updates.</p>
+          </div>
         </div>
-        <button onClick={logout} className="text-sm text-slate-500 hover:text-slate-900">
-          Log out
-        </button>
+        <nav className="flex items-center gap-3">
+          <a href="/desk" className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:border-accent hover:text-accent">IT Desk board</a>
+          <button onClick={logout} className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:text-foreground">Log out</button>
+        </nav>
       </header>
-      <div className="grid gap-4 md:grid-cols-5">
-        <section className="md:col-span-3">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(360px,0.7fr)]">
+        <section>
           <AgentChat onDataChanged={() => setRefreshKey((k) => k + 1)} />
         </section>
-        <section className="md:col-span-2">
-          <TaskList refreshKey={refreshKey} />
+        <section>
+          <EmployeeOverview refreshKey={refreshKey} />
         </section>
       </div>
     </main>

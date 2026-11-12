@@ -5,11 +5,10 @@ import type { AgentResult, AgentStep } from "@/lib/agent/types";
 
 type Message = { role: "user" | "model"; text: string; steps?: AgentStep[] };
 
-// YOUR JOB: change these sample prompts to match your problem statement.
 const SAMPLE_PROMPTS = [
-  "Add a task to call the vendor tomorrow, then show all my tasks.",
-  "Which tasks are still open?",
-  "Mark the vendor call task as done.",
+  "How do I connect to VPN from home?",
+  "My laptop battery drains quickly. I've tried another power socket; please raise a ticket.",
+  "Show my active IT tickets.",
 ];
 
 export default function AgentChat({ onDataChanged }: { onDataChanged?: () => void }) {
@@ -52,21 +51,24 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
   }
 
   return (
-    <div className="flex h-[70vh] flex-col rounded-xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-4 py-3">
-        <h2 className="font-semibold">Agent</h2>
-        <p className="text-xs text-slate-500">Ask in plain English. You can see every tool the agent uses.</p>
+    <div className="flex h-[78vh] min-h-[620px] flex-col overflow-hidden rounded-[26px] border border-border bg-card">
+      <div className="border-b border-border px-5 py-4">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-accent" />
+          <h2 className="font-semibold">Ask DeskBot</h2>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">Describe the issue, what you tried, and how work is affected.</p>
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto p-4">
         {messages.length === 0 && (
           <div className="space-y-2">
-            <p className="text-sm text-slate-500">Try one of these:</p>
+            <p className="text-sm text-muted-foreground">Try one of these:</p>
             {SAMPLE_PROMPTS.map((p) => (
               <button
                 key={p}
                 onClick={() => send(p)}
-                className="block w-full rounded-lg border border-slate-200 px-3 py-2 text-left text-sm hover:bg-slate-50"
+                className="block w-full rounded-xl border border-border px-3 py-3 text-left text-sm text-muted-foreground transition hover:border-accent/60 hover:text-foreground"
               >
                 {p}
               </button>
@@ -79,13 +81,13 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
             <div
               className={
                 m.role === "user"
-                  ? "max-w-[85%] rounded-2xl bg-slate-900 px-3 py-2 text-sm text-white"
+                  ? "max-w-[85%] rounded-2xl bg-accent px-4 py-3 text-sm text-background"
                   : "max-w-[85%] space-y-2"
               }
             >
               {m.steps && m.steps.length > 0 && <ToolSteps steps={m.steps} />}
               {m.role === "model" ? (
-                <div className="whitespace-pre-wrap rounded-2xl bg-slate-100 px-3 py-2 text-sm">{m.text}</div>
+                <div className="whitespace-pre-wrap rounded-2xl border border-border bg-muted px-4 py-3 text-sm leading-relaxed">{m.text}</div>
               ) : (
                 m.text
               )}
@@ -93,8 +95,8 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
           </div>
         ))}
 
-        {loading && <p className="text-sm text-slate-500">Agent is working...</p>}
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {loading && <p className="text-sm text-muted-foreground">DeskBot is checking the helpdesk…</p>}
+        {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <div ref={bottomRef} />
       </div>
 
@@ -103,18 +105,18 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
           e.preventDefault();
           send(input);
         }}
-        className="flex gap-2 border-t border-slate-200 p-3"
+        className="flex gap-2 border-t border-border p-3"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your request..."
-          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+          placeholder="Describe your IT issue…"
+          className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none placeholder:text-muted-foreground"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>
@@ -128,14 +130,14 @@ function ToolSteps({ steps }: { steps: AgentStep[] }) {
   return (
     <div className="space-y-1">
       {steps.map((s, i) => (
-        <details key={i} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs">
+        <details key={i} className="rounded-xl border border-border bg-background px-3 py-2 text-xs">
           <summary className="cursor-pointer select-none">
-            <span className={s.ok ? "text-emerald-700" : "text-red-600"}>{s.ok ? "Done" : "Failed"}</span>
+            <span className={s.ok ? "text-accent" : "text-danger"}>{s.ok ? "Done" : "Failed"}</span>
             {" · "}
             <span className="font-mono font-medium">{s.tool}</span>
-            {s.writes && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-amber-800">writes data</span>}
+            {s.writes && <span className="ml-2 rounded bg-warn/15 px-1.5 py-0.5 text-warn">writes data</span>}
           </summary>
-          <pre className="mt-1 overflow-x-auto whitespace-pre-wrap text-slate-600">
+          <pre className="mt-1 overflow-x-auto whitespace-pre-wrap text-muted-foreground">
             {JSON.stringify({ args: s.args, ...(s.ok ? { result: s.result } : { error: s.error }) }, null, 2)}
           </pre>
         </details>

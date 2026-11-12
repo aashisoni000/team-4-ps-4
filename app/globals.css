@@ -1,5 +1,67 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+  --background: #090b10;
+  --foreground: #f3f5f7;
+  --card: #12161e;
+  --muted: #202630;
+  --muted-foreground: #9aa5b4;
+  --border: #2a313c;
+  --accent: #c3f56a;
+  --accent-2: #b7a3ff;
+  --warn: #f4bf62;
+  --danger: #ff7b78;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 18% 0%, rgb(195 245 106 / 6%), transparent 32rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
