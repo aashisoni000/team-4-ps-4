@@ -24,15 +24,15 @@ export default function HomePage() {
           </div>
         </div>
         <nav className="flex items-center gap-3">
-          <a href="/desk" className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:border-accent hover:text-accent">IT Desk board</a>
-          <button onClick={logout} className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:text-foreground">Log out</button>
+          <a href="/desk" className="inline-flex min-h-11 items-center rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:border-accent hover:text-accent">IT Desk board</a>
+          <button onClick={logout} className="min-h-11 rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition hover:text-foreground">Log out</button>
         </nav>
       </header>
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(360px,0.7fr)]">
-        <section>
+      <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(360px,0.7fr)]">
+        <section className="min-w-0">
           <AgentChat onDataChanged={() => setRefreshKey((k) => k + 1)} />
         </section>
-        <section>
+        <section className="min-w-0">
           <EmployeeOverview refreshKey={refreshKey} />
         </section>
       </div>

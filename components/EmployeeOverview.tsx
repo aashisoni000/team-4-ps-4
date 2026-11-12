@@ -21,7 +21,7 @@ type EmployeeData = {
     sla_text: string | null;
   }>;
   active_count: number;
-  next_sla: { id: number; title: string; team: string | null; sla_due_at: string } | null;
+  next_sla: { id: number; title: string; team: string | null; sla_due_at: string; sla_due: string | null } | null;
   device_inventory_available: boolean;
 };
 
@@ -86,7 +86,7 @@ export default function EmployeeOverview({ refreshKey }: { refreshKey: number })
             {data?.next_sla ? (
               <>
                 <p className="mt-2 font-medium">#{data.next_sla.id} · {data.next_sla.title}</p>
-                <p className="mt-1 font-mono text-sm tabular-nums text-accent">{data.next_sla.sla_due_at}</p>
+                <p className="mt-1 font-mono text-sm tabular-nums text-accent">{data.next_sla.sla_due ?? data.next_sla.sla_due_at}</p>
               </>
             ) : <p className="mt-2 text-sm text-muted-foreground">No active ticket target</p>}
           </div>

@@ -86,6 +86,7 @@ export async function GET() {
           team: nextSla.team,
           created_at: nextSla.created_at,
           sla_due_at: nextSla.sla_due_at,
+          sla_due: nextSla.sla_due,
         }
       : null,
     device_inventory_available: false,

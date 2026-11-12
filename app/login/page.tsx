@@ -11,17 +11,22 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passcode }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      window.location.href = "/";
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Login failed");
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      if (res.ok) {
+        window.location.href = "/";
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Login failed");
+      }
+    } catch {
+      setError("Could not reach the server. Check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -35,7 +40,7 @@ export default function LoginPage() {
           type="password"
           value={passcode}
           onChange={(e) => setPasscode(e.target.value)}
-          className="mt-5 w-full rounded-xl border border-border bg-background px-3 py-3 text-foreground outline-none placeholder:text-muted-foreground"
+          className="mt-5 min-h-11 w-full rounded-xl border border-border bg-background px-3 py-3 text-foreground outline-none placeholder:text-muted-foreground"
           placeholder="Passcode"
           autoFocus
         />
@@ -43,7 +48,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading || !passcode}
-          className="mt-4 w-full rounded-xl bg-accent px-3 py-3 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 min-h-11 w-full rounded-xl bg-accent px-3 py-3 font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Checking..." : "Enter"}
         </button>

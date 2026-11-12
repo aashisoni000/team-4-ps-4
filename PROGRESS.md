@@ -2,6 +2,8 @@
 
 The implementation was adapted to the available `seed/ps4_it_helpdesk.sql`. The original DeskPilot guide referenced different tables, employee `E001`, database RPCs, and a design kit that are not part of this repository. Do not mark live checks complete until tested against the configured app.
 
+The latest review fixes are kept as local, uncommitted changes for the user to review and push manually. No commit or push was made for those changes.
+
 ## Implementation and local checks
 
 - [x] Plan adapted to the PS4 seed and its actual schema.
@@ -20,8 +22,14 @@ The implementation was adapted to the available `seed/ps4_it_helpdesk.sql`. The 
 - [ ] Create a ticket from chat and confirm its team and SLA target.
 - [ ] Move a ticket through the IT Desk statuses and verify the employee view refreshes.
 - [ ] Run the full end-to-end checks with the configured Gemini and Supabase services.
-- [ ] Commit, push, and deploy after the live checks pass.
+- [ ] User manually commits and pushes after review and live checks.
+- [ ] Configure Supabase and Gemini environment variables in Vercel, deploy, and verify the live app.
 
 ## Seed limitations
 
 The available seed does not define service-status rows, assigned devices, individual technicians, ticket-event history, ticket cancellation, or create/cancel RPC functions. The app reports these limits rather than fabricating data or behavior.
+
+## Stretch work (no additional SQL)
+
+- [ ] Mobile check — responsive layouts and 44px minimum interactive targets implemented. A 360px browser check confirmed no horizontal overflow on the login screen; authenticated employee and IT Desk screens still need a signed-in visual check.
+- [ ] Other stretch guides are not implemented: they require schema objects/data absent from the PS4 seed (article feedback, outage reports/status, ticket events/notes, assigned-device warranty data, or persisted escalation SLA overrides). No additional SQL was created, per the user's instruction.

@@ -15,11 +15,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const priorityOrder: Record<TicketPriority, number> = { P1: 0, P2: 1, P3: 2, P4: 3 };
-const nextStatus: Partial<Record<TicketStatus, TicketStatus>> = {
-  open: "in_progress",
-  in_progress: "waiting_for_user",
-  waiting_for_user: "resolved",
-  resolved: "closed",
+const allowedNextStatuses: Partial<Record<TicketStatus, readonly TicketStatus[]>> = {
+  open: ["in_progress"],
+  in_progress: ["resolved", "waiting_for_user"],
+  waiting_for_user: ["in_progress", "resolved"],
+  resolved: ["closed"],
 };
 const updateSchema = z.object({
   ticket_id: z.number().int().positive(),
@@ -36,13 +36,23 @@ function isTodayInIndia(iso: string, today: string): boolean {
 
 export async function GET() {
   const supabase = getSupabase();
-  const [{ data: tickets, error: ticketError }, { data: rules, error: ruleError }] = await Promise.all([
+  const now = new Date();
+  const minutesUntilIstHour = (now.getUTCMinutes() + 30) % 60;
+  const istHourBoundary = new Date(
+    now.getTime() -
+      minutesUntilIstHour * 60_000 -
+      now.getUTCSeconds() * 1000 -
+      now.getUTCMilliseconds()
+  );
+  const hourlyStart = new Date(istHourBoundary.getTime() - 11 * 60 * 60 * 1000);
+  const [{ data: tickets, error: ticketError }, { data: rules, error: ruleError }, { data: recentTickets, error: recentError }] = await Promise.all([
     supabase
       .from("tickets")
       .select("id, employee_id, title, description, category, priority, team_id, status, created_at, updated_at, employees(name, department, location), support_teams(name)")
-      .neq("status", "closed")
+      .in("status", ["open", "in_progress", "waiting_for_user", "resolved"])
       .order("created_at", { ascending: false }),
     supabase.from("sla_rules").select("priority, response_hours, resolve_hours"),
+    supabase.from("tickets").select("created_at").gte("created_at", hourlyStart.toISOString()),
   ]);
   if (ticketError) {
     console.error("[api/desk] Ticket query failed", ticketError);
@@ -52,8 +62,11 @@ export async function GET() {
     console.error("[api/desk] SLA query failed", ruleError);
     return NextResponse.json({ error: ruleError.message }, { status: 500 });
   }
+  if (recentError) {
+    console.error("[api/desk] Recent ticket query failed", recentError);
+    return NextResponse.json({ error: recentError.message }, { status: 500 });
+  }
 
-  const now = new Date();
   const rulesByPriority = new Map(rules.map((rule) => [rule.priority, rule]));
   const shapedTickets = tickets.map((ticket) => {
     const rule = rulesByPriority.get(ticket.priority);
@@ -85,17 +98,12 @@ export async function GET() {
       Date.parse(a.sla_due_at ?? a.created_at) - Date.parse(b.sla_due_at ?? b.created_at)
   );
 
-  const utcMinutes = now.getUTCMinutes();
-  const istHourBoundary = new Date(
-    now.getTime() - (((utcMinutes + 30) % 60) * 60_000 + now.getUTCSeconds() * 1000 + now.getUTCMilliseconds())
-  );
-  const hourlyStart = new Date(istHourBoundary.getTime() - 11 * 60 * 60 * 1000);
   const hourly = Array.from({ length: 12 }, (_, index) => {
     const bucketStart = new Date(hourlyStart.getTime() + index * 60 * 60 * 1000);
     const bucketEnd = new Date(bucketStart.getTime() + 60 * 60 * 1000);
     return {
       label: formatISTHour(bucketStart),
-      count: tickets.filter((ticket) => {
+      count: recentTickets.filter((ticket) => {
         const createdAt = Date.parse(ticket.created_at);
         return createdAt >= bucketStart.getTime() && createdAt < bucketEnd.getTime();
       }).length,
@@ -134,7 +142,7 @@ export async function POST(request: Request) {
   if (!current) return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
 
   const previousStatus = current.status as TicketStatus;
-  if (nextStatus[previousStatus] !== status) {
+  if (!allowedNextStatuses[previousStatus]?.includes(status)) {
     return NextResponse.json({ error: `Ticket cannot move from ${previousStatus} to ${status}` }, { status: 409 });
   }
 

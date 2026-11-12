@@ -36,7 +36,8 @@ export function formatIST(iso: string): string {
 }
 
 export function slaText(iso: string): string {
-  const minutes = Math.ceil((new Date(iso).getTime() - Date.now()) / 60_000);
+  const rawMinutes = (new Date(iso).getTime() - Date.now()) / 60_000;
+  const minutes = rawMinutes >= 0 ? Math.ceil(rawMinutes) : Math.floor(rawMinutes);
   const hours = Math.floor(Math.abs(minutes) / 60);
   const remainder = Math.abs(minutes) % 60;
   const duration = hours > 0 ? `${hours}h ${remainder}m` : `${remainder}m`;

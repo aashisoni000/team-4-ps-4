@@ -68,7 +68,7 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
               <button
                 key={p}
                 onClick={() => send(p)}
-                className="block w-full rounded-xl border border-border px-3 py-3 text-left text-sm text-muted-foreground transition hover:border-accent/60 hover:text-foreground"
+                className="block min-h-11 w-full rounded-xl border border-border px-3 py-3 text-left text-sm text-muted-foreground transition hover:border-accent/60 hover:text-foreground"
               >
                 {p}
               </button>
@@ -111,12 +111,12 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Describe your IT issue…"
-          className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none placeholder:text-muted-foreground"
+          className="min-h-11 min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none placeholder:text-muted-foreground"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-11 min-w-16 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>

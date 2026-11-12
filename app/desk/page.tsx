@@ -144,7 +144,7 @@ export default function ITDeskPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 md:px-8 md:py-9">
+    <main className="min-h-screen overflow-x-hidden px-4 py-6 md:px-8 md:py-9">
       <div className="mx-auto max-w-[1680px]">
         <header className="flex flex-col gap-5 border-b border-border pb-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="flex items-start gap-3">
@@ -238,7 +238,7 @@ function FilterButton({ selected, onClick, children }: { selected: boolean; onCl
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-xs transition ${selected ? "border-accent bg-accent text-background" : "border-border text-muted-foreground hover:text-foreground"}`}
+      className={`min-h-11 rounded-full border px-3 py-2 text-xs transition ${selected ? "border-accent bg-accent text-background" : "border-border text-muted-foreground hover:text-foreground"}`}
     >
       {children}
     </button>
@@ -311,7 +311,7 @@ function TicketCard({ ticket, loading, conflict, onUpdate }: { ticket: DeskTicke
             type="button"
             disabled={loading}
             onClick={onUpdate}
-            className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition disabled:cursor-wait disabled:opacity-60 ${action.classes}`}
+            className={`mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition disabled:cursor-wait disabled:opacity-60 ${action.classes}`}
           >
             {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" aria-label="Updating" />}
             {loading ? "Updating…" : action.label}
